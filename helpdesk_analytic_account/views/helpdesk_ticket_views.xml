@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_helpdesk_ticket_form_inherit" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.form.inherit</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Reemplazar el campo analytic_account_id -->
+            <xpath expr="//field[@name='analytic_account_id']" position="replace">
+                <field name="analytic_account_id"
+                       domain="[('partner_id', '=', partner_id)]"
+                       placeholder="Seleccione cuenta analítica"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

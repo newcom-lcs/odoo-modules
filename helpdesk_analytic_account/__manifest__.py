@@ -5,7 +5,9 @@
     'version': '16.0.1',
     'category': 'Stock',
     'depends': ['timesheet_grid', 'helpdesk' ],
-    'data':[  ],
+    'data':[ 
+        'views/helpdesk_ticket_views.xml',
+     ],
     'auto_install': False,
     'installable' : True,
     'application' : False,

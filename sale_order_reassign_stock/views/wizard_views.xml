@@ -1,0 +1,22 @@
+<odoo>
+    <record id="view_stock_reassign_wizard_form" model="ir.ui.view">
+        <field name="name">stock.reassign.wizard.form</field>
+        <field name="model">stock.reassign.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reasignar Stock y Orden de Compra">
+                <sheet>
+                    <group>
+                        <field name="source_order_id"/>
+                        <field name="target_order_id"/>
+                        <field name="product_id"/>
+                        <field name="quantity"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Reasignar" type="object" name="action_reassign_stock" class="oe_highlight"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

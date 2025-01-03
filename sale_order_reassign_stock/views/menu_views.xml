@@ -1,0 +1,15 @@
+<odoo>
+    <record id="action_stock_reassign_wizard" model="ir.actions.act_window">
+        <field name="name">Reasignar Stock</field>
+        <field name="res_model">stock.reassign.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_stock_reassign_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_stock_reassign_wizard"
+              name="Reasignar Stock"
+              parent="sale.menu_sale_order"
+              action="action_stock_reassign_wizard"
+              sequence="10"/>
+</odoo>

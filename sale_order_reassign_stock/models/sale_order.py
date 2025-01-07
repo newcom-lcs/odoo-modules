@@ -33,10 +33,10 @@ class SaleOrder(models.Model):
         forecasted_qty = sum(move.forecast_availability for move in target_moves)
 
         _logger.info(f"cantidad reservada en orden de origen {reserved_qty}..")
-        _logger.info(f"cantidad esperada en orden de destino {forecasted_qty}..")
+        _logger.info(f"cantidad esperando recepción en orden de destino {forecasted_qty}..")
         
-        if forecasted_qty < quantity:
-            raise exceptions.UserError(f"no se pueden transferir más de {forecasted_qty} {product.name} a la orden  {target_order.name}.")
+        # if forecasted_qty < quantity:
+        #     raise exceptions.UserError(f"no se pueden transferir más de {forecasted_qty} {product.name} a la orden  {target_order.name}.")
         
         if reserved_qty < quantity:
             raise exceptions.UserError(f"No hay suficiente stock reservado en la orden {source_order.name}.")

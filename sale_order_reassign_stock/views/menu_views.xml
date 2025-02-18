@@ -9,7 +9,7 @@
 
     <menuitem id="menu_stock_reassign_wizard"
               name="Reasignar Stock"
-              parent="sale.menu_sale_order"
+              parent="sale.sale_order_menu"
               action="action_stock_reassign_wizard"
               sequence="10"/>
 </odoo>

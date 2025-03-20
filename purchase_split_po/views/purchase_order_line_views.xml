@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add button to purchase order line tree view -->
+    <record id="purchase_order_form_inherit" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.split</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree/field[1]" position="before">
+                <button name="action_open_split_wizard" 
+                        type="object" 
+                        icon="fa-code-fork" 
+                        attrs="{'invisible': [('state', 'not in', ['draft', 'sent'])]}" 
+                        class="oe_highlight"
+                        title="Crear nueva orden de compra a partir de esta línea"/>
+            </xpath>
+        </field>
+    </record>
+</odoo> 

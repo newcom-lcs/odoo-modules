@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_purchase_split_wizard_form" model="ir.ui.view">
+        <field name="name">purchase.order.split.wizard.form</field>
+        <field name="model">purchase.order.split.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create New Purchase Order">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="purchase_order_id" readonly="1"/>
+                            <field name="purchase_line_id" readonly="1"/>
+                            <field name="product_id" readonly="1"/>
+                            <field name="supplier_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="sale_order_id" readonly="1" attrs="{'invisible': [('sale_order_id', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="order_qty" readonly="1"/>
+                            <field name="remaining_qty" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_create_new_po" string="Create New PO" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo> 

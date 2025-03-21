@@ -11,5 +11,6 @@
               name="Reasignar Stock"
               parent="sale.sale_order_menu"
               action="action_stock_reassign_wizard"
-              sequence="10"/>
+              sequence="10"
+              groups="sales_team.group_sale_manager"/>
 </odoo>

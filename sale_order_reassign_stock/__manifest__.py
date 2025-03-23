@@ -5,7 +5,7 @@
     'license': 'LGPL-3',
     'author': 'Newcom LCS',
     'category': 'Sales',
-    'depends': ['base',  "stock", 'sale_management'],
+    'depends': ['base',  "stock", 'sale_management', 'permisos_equipos_ventas'],
     
     'data': [
         "views/wizard_views.xml",

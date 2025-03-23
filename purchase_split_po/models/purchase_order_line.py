@@ -26,7 +26,7 @@ class PurchaseOrderLine(models.Model):
         
         # Return an action to open the wizard
         return {
-            'name': _('Create New Purchase Order'),
+            'name': _('Crear Nueva Orden de Compra'),
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
             'res_model': 'purchase.order.split.wizard',

@@ -1,13 +1,13 @@
 {
-    'name': "Purchase Split PO",
+    'name': "Dividir Órdenes de Compra",
     'summary': """
-        Split Purchase Orders and create new ones from existing lines
+        Dividir Órdenes de Compra y crear nuevas a partir de líneas existentes
     """,
     'description': """
-        This module allows users to create a new Purchase Order (PO) from 
-        a line inside an existing PO. It includes a wizard to select a supplier 
-        and ensures proper stock management while maintaining the link to the 
-        original Sales Order (SO).
+        Este módulo permite a los usuarios crear una nueva Orden de Compra (OC) a partir de 
+        una línea dentro de una OC existente. Incluye un asistente para seleccionar un proveedor 
+        y asegura una gestión adecuada del inventario mientras mantiene el vínculo con la 
+        Orden de Venta (OV) original.
     """,
     'author': 'Newcom LCS',
     'website': 'https://www.newcom-lcs.com',

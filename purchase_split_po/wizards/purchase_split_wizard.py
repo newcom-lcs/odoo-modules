@@ -6,45 +6,45 @@ _logger = logging.getLogger(__name__)
 
 class PurchaseOrderSplitWizard(models.TransientModel):
     _name = 'purchase.order.split.wizard'
-    _description = 'Wizard to Split Purchase Order Line to New PO'
+    _description = 'Asistente para Dividir Línea de Orden de Compra'
 
     purchase_order_id = fields.Many2one(
         'purchase.order', 
-        string='Original Purchase Order',
+        string='Orden de Compra Original',
         required=True,
     )
     purchase_line_id = fields.Many2one(
         'purchase.order.line', 
-        string='Purchase Order Line',
+        string='Línea de Orden de Compra',
         required=True,
     )
     product_id = fields.Many2one(
         'product.product', 
-        string='Product',
+        string='Producto',
         required=True,
         readonly=True,
     )
     supplier_id = fields.Many2one(
         'res.partner', 
-        string='Supplier',
+        string='Proveedor',
         required=True,
     )
     order_qty = fields.Float(
-        string='Order Quantity',
+        string='Cantidad Ordenada',
         required=True,
     )
     expected_date = fields.Datetime(
-        string='Expected Date',
+        string='Fecha Prevista',
         required=True,
     )
     remaining_qty = fields.Float(
-        string='Remaining Quantity',
+        string='Cantidad Restante',
         compute='_compute_remaining_qty',
     )
     # Add a reference field to display the linked sale order
     sale_order_id = fields.Many2one(
         'sale.order',
-        string='Linked Sales Order',
+        string='Orden de Venta Vinculada',
         compute='_compute_sale_order',
         readonly=True,
     )

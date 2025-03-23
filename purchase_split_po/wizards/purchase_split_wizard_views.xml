@@ -4,7 +4,7 @@
         <field name="name">purchase.order.split.wizard.form</field>
         <field name="model">purchase.order.split.wizard</field>
         <field name="arch" type="xml">
-            <form string="Create New Purchase Order">
+            <form string="Crear Nueva Orden de Compra">
                 <sheet>
                     <group>
                         <group>
@@ -21,8 +21,8 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button name="action_create_new_po" string="Create New PO" type="object" class="btn-primary"/>
-                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button name="action_create_new_po" string="Crear Nueva OC" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>

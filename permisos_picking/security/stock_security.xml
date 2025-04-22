@@ -3,7 +3,7 @@
     <!-- Create main permission group -->
     <record id="group_inventory_read_only" model="res.groups">
         <field name="name">User: Inventory Read Only</field>
-        <field name="comment">The user will have read-only access to inventory except for PEDIDO operations and chatter.</field>
+        <field name="comment">The user will have read-only access to inventory except for PEDIDO operations.</field>
         <field name="category_id" ref="base.module_category_hidden"/>
         <field name="implied_ids" eval="[(4, ref('stock.group_stock_user'))]"/>
     </record>
@@ -20,7 +20,7 @@
     <record id="stock_picking_read_only_rule" model="ir.rule">
         <field name="name">Stock Picking Read Only Except PEDIDO</field>
         <field name="model_id" ref="stock.model_stock_picking"/>
-        <field name="domain_force">[('picking_type_id.sequence_code', '=', 'PEDIDO')]</field>
+        <field name="domain_force">['|', ('picking_type_id.sequence_code', '=', 'PEDIDO'), ('picking_type_id.name', '=', 'Pedido de Materiales (Ventas/Operaciones)')]</field>
         <field name="groups" eval="[(4, ref('group_inventory_read_only'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
@@ -32,23 +32,11 @@
     <record id="stock_move_read_only_rule" model="ir.rule">
         <field name="name">Stock Move Read Only Except PEDIDO</field>
         <field name="model_id" ref="stock.model_stock_move"/>
-        <field name="domain_force">[('picking_id.picking_type_id.sequence_code', '=', 'PEDIDO')]</field>
+        <field name="domain_force">['|', ('picking_id.picking_type_id.sequence_code', '=', 'PEDIDO'), ('picking_id.picking_type_id.name', '=', 'Pedido de Materiales (Ventas/Operaciones)')]</field>
         <field name="groups" eval="[(4, ref('group_inventory_read_only'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-
-    <!-- Record rule for mail.message to allow chatter access -->
-    <record id="mail_message_chatter_rule" model="ir.rule">
-        <field name="name">Mail Message Chatter Access</field>
-        <field name="model_id" ref="mail.model_mail_message"/>
-        <field name="domain_force">[('model', 'in', ['stock.picking', 'stock.move'])]</field>
-        <field name="groups" eval="[(4, ref('group_inventory_read_only'))]"/>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="True"/>
         <field name="perm_unlink" eval="False"/>
     </record>
 </odoo> 

@@ -1,1 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_order_sales_viewer,purchase.order.sales.viewer,model_purchase_order,permisos_picking.group_purchase_sales_viewer,1,0,0,0
+access_sale_order_purchase_viewer,sale.order.purchase.viewer,model_sale_order,permisos_picking.group_purchase_sales_viewer,1,0,0,0

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add Sales Order button to Purchase Order form -->
+    <record id="view_purchase_order_form_inherit_sales_view" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.sales.view</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_view_sales_orders" 
+                        string="Ver Órdenes de Venta Relacionadas" 
+                        type="object"
+                        class="btn-secondary"
+                        groups="sales_order_purchase_view.group_purchase_sales_viewer"/>
+            </xpath>
+        </field>
+    </record>
+</odoo> 

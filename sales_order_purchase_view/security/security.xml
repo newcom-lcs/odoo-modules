@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Purchase Team - Sales Viewer Group -->
+    <record id="group_purchase_sales_viewer" model="res.groups">
+        <field name="name">Purchase Team - Sales Viewer</field>
+        <field name="category_id" ref="base.module_category_purchase"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+</odoo> 

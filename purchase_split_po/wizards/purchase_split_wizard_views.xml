@@ -12,10 +12,10 @@
                             <field name="supplier_id" options="{'no_create': True, 'no_open': True}"/>
                         </group>
                         <group>
-                            <field name="purchase_line_id" readonly="1" attrs="{'invisible': [('selected_line_ids', '!=', [])]}"/>
-                            <field name="product_id" readonly="1" attrs="{'invisible': [('selected_line_ids', '!=', [])]}"/>
-                            <field name="order_qty" readonly="1" attrs="{'invisible': [('selected_line_ids', '!=', [])]}"/>
-                            <field name="remaining_qty" readonly="1" attrs="{'invisible': [('selected_line_ids', '!=', [])]}"/>
+                            <separator string="Seleccionar Acción"/>
+                            <field name="action_type" widget="radio"/>
+                            <field name="existing_purchase_order_id" 
+                                   attrs="{'invisible': [('action_type', '!=', 'existing')], 'required': [('action_type', '=', 'existing')]}"/>
                         </group>
                     </group>
                     
@@ -27,19 +27,6 @@
                                options="{'no_create': True, 'no_open': True}"
                                domain="[('id', 'in', available_line_ids)]"/>
                         <field name="total_selected_qty" readonly="1"/>
-                    </group>
-                    
-                    <separator string="Seleccionar Acción"/>
-                    <group>
-                        <group>
-                            <field name="action_type" widget="radio"/>
-                        </group>
-                    </group>
-                    <group attrs="{'invisible': [('action_type', '!=', 'existing')]}">
-                        <group>
-                            <field name="existing_purchase_order_id" 
-                                   attrs="{'required': [('action_type', '=', 'existing')]}"/>
-                        </group>
                     </group>
                 </sheet>
                 <footer>

@@ -29,6 +29,16 @@ class PurchaseOrderSplitWizard(models.TransientModel):
         string='Proveedor',
         required=True,
     )
+    existing_purchase_order_id = fields.Many2one(
+        'purchase.order',
+        string='Orden de Compra Existente',
+        domain="[('state', 'in', ['draft', 'sent']), ('partner_id', '=', supplier_id)]",
+        help="Selecciona una orden de compra existente para mover esta línea"
+    )
+    action_type = fields.Selection([
+        ('new', 'Crear Nueva Orden de Compra'),
+        ('existing', 'Mover a Orden Existente')
+    ], string='Acción', default='new', required=True)
     order_qty = fields.Float(
         string='Cantidad Ordenada',
         required=True,
@@ -108,6 +118,24 @@ class PurchaseOrderSplitWizard(models.TransientModel):
             # No domain restrictions - allow searching all contacts
             return {}
     
+    @api.onchange('supplier_id')
+    def _onchange_supplier_id(self):
+        """Update existing PO domain when supplier changes"""
+        if self.supplier_id:
+            return {
+                'domain': {
+                    'existing_purchase_order_id': [
+                        ('state', 'in', ['draft', 'sent']),
+                        ('partner_id', '=', self.supplier_id.id)
+                    ]
+                }
+            }
+        return {
+            'domain': {
+                'existing_purchase_order_id': [('id', '=', False)]
+            }
+        }
+    
     def action_create_new_po(self):                       
         """
         Create a new purchase order with the selected line and supplier
@@ -162,4 +190,51 @@ class PurchaseOrderSplitWizard(models.TransientModel):
             'res_model': 'purchase.order',
             'res_id': new_po.id,
             'target': 'current',
-        } 
+        }
+    
+    def action_move_to_existing_po(self):
+        """
+        Move the purchase order line to an existing purchase order
+        """
+        self.ensure_one()
+        
+        if not self.existing_purchase_order_id:
+            raise UserError(_('Debe seleccionar una orden de compra existente.'))
+        
+        purchase_line = self.purchase_line_id
+        target_po = self.existing_purchase_order_id
+        
+        # Validate that the target PO is compatible
+        if target_po.partner_id != self.supplier_id:
+            raise UserError(_('El proveedor de la orden de compra seleccionada debe coincidir con el proveedor seleccionado.'))
+        
+        if target_po.state not in ['draft', 'sent']:
+            raise UserError(_('Solo se pueden mover líneas a órdenes de compra en estado Borrador o Enviado.'))
+        
+        # Move the line to the target PO
+        purchase_line.write({
+            'order_id': target_po.id,
+        })
+        
+        # Return action to open the target purchase order
+        return {
+            'name': _('Purchase Order'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'purchase.order',
+            'res_id': target_po.id,
+            'target': 'current',
+        }
+    
+    def action_execute(self):
+        """
+        Execute the selected action (create new PO or move to existing)
+        """
+        self.ensure_one()
+        
+        if self.action_type == 'new':
+            return self.action_create_new_po()
+        elif self.action_type == 'existing':
+            return self.action_move_to_existing_po()
+        else:
+            raise UserError(_('Tipo de acción no válido.')) 

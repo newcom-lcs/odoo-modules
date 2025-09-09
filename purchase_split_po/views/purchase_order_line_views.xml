@@ -12,7 +12,7 @@
                         icon="fa-code-fork" 
                         attrs="{'invisible': [('state', 'not in', ['draft', 'sent'])]}" 
                         class="oe_highlight"
-                        title="Crear nueva orden de compra a partir de esta línea"/>
+                        title="Dividir línea: crear nueva orden o mover a existente"/>
             </xpath>
         </field>
     </record>

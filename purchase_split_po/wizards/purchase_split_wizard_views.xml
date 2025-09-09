@@ -4,7 +4,7 @@
         <field name="name">purchase.order.split.wizard.form</field>
         <field name="model">purchase.order.split.wizard</field>
         <field name="arch" type="xml">
-            <form string="Crear Nueva Orden de Compra">
+            <form string="Dividir Línea de Orden de Compra">
                 <sheet>
                     <group>
                         <group>
@@ -19,9 +19,21 @@
                             <field name="remaining_qty" readonly="1"/>
                         </group>
                     </group>
+                    <separator string="Seleccionar Acción"/>
+                    <group>
+                        <group>
+                            <field name="action_type" widget="radio"/>
+                        </group>
+                    </group>
+                    <group attrs="{'invisible': [('action_type', '!=', 'existing')]}">
+                        <group>
+                            <field name="existing_purchase_order_id" 
+                                   attrs="{'required': [('action_type', '=', 'existing')]}"/>
+                        </group>
+                    </group>
                 </sheet>
                 <footer>
-                    <button name="action_create_new_po" string="Crear Nueva OC" type="object" class="btn-primary"/>
+                    <button name="action_execute" string="Ejecutar" type="object" class="btn-primary"/>
                     <button string="Cancelar" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

@@ -4,21 +4,31 @@
         <field name="name">purchase.order.split.wizard.form</field>
         <field name="model">purchase.order.split.wizard</field>
         <field name="arch" type="xml">
-            <form string="Dividir Línea de Orden de Compra">
+            <form string="Dividir Líneas de Orden de Compra">
                 <sheet>
                     <group>
                         <group>
                             <field name="purchase_order_id" readonly="1"/>
-                            <field name="purchase_line_id" readonly="1"/>
-                            <field name="product_id" readonly="1"/>
                             <field name="supplier_id" options="{'no_create': True, 'no_open': True}"/>
-                            <field name="sale_order_id" readonly="1" attrs="{'invisible': [('sale_order_id', '=', False)]}"/>
                         </group>
                         <group>
-                            <field name="order_qty" readonly="1"/>
-                            <field name="remaining_qty" readonly="1"/>
+                            <field name="purchase_line_id" readonly="1" attrs="{'invisible': [('selected_line_ids', '!=', [])]}"/>
+                            <field name="product_id" readonly="1" attrs="{'invisible': [('selected_line_ids', '!=', [])]}"/>
+                            <field name="order_qty" readonly="1" attrs="{'invisible': [('selected_line_ids', '!=', [])]}"/>
+                            <field name="remaining_qty" readonly="1" attrs="{'invisible': [('selected_line_ids', '!=', [])]}"/>
                         </group>
                     </group>
+                    
+                    <!-- Show available lines for selection -->
+                    <group attrs="{'invisible': [('available_line_ids', '=', [])]}">
+                        <separator string="Seleccionar Líneas para Mover"/>
+                        <field name="available_line_ids" widget="many2many_tags" readonly="1"/>
+                        <field name="selected_line_ids" widget="many2many_checkboxes" 
+                               options="{'no_create': True, 'no_open': True}"
+                               domain="[('id', 'in', available_line_ids)]"/>
+                        <field name="total_selected_qty" readonly="1"/>
+                    </group>
+                    
                     <separator string="Seleccionar Acción"/>
                     <group>
                         <group>

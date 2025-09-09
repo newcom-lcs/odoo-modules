@@ -7,32 +7,6 @@ _logger = logging.getLogger(__name__)
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
     
-    def action_open_split_wizard(self):
-        """
-        Open the split wizard for the selected purchase order line
-        """
-        self.ensure_one()
-        
-        # Instead of directly creating a wizard, we'll use context
-        # to pass the necessary data
-        context = {
-            'default_purchase_order_id': self.order_id.id,
-            'default_purchase_line_id': self.id,
-            'default_product_id': self.product_id.id,
-            'default_order_qty': self.product_qty,
-            'default_expected_date': self.date_planned,
-            'default_supplier_id': self.order_id.partner_id.id,
-        }
-        
-        # Return an action to open the wizard
-        return {
-            'name': _('Dividir Línea de Orden de Compra'),
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'purchase.order.split.wizard',
-            'target': 'new',
-            'context': context,
-        }
     
     # def _prepare_stock_moves(self, picking):
     #     """

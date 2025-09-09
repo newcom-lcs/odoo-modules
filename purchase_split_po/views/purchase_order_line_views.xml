@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Add button to purchase order line tree view -->
+    <!-- Add button to purchase order form header -->
     <record id="purchase_order_form_inherit" model="ir.ui.view">
         <field name="name">purchase.order.form.inherit.split</field>
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='order_line']/tree/field[1]" position="before">
+            <xpath expr="//header" position="inside">
                 <button name="action_open_split_wizard" 
                         type="object" 
-                        icon="fa-code-fork" 
+                        string="Dividir PO"
                         attrs="{'invisible': [('state', 'not in', ['draft', 'sent'])]}" 
-                        class="oe_highlight"
-                        title="Dividir línea: crear nueva orden o mover a existente"/>
+                        class="btn-secondary"
+                        title="Dividir líneas: crear nueva orden o mover a existente"/>
             </xpath>
         </field>
     </record>

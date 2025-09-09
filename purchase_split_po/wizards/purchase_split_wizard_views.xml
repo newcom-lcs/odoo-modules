@@ -19,21 +19,32 @@
                         </group>
                     </group>
                     
-                    <!-- Show available lines for selection -->
-                    <group attrs="{'invisible': [('available_line_ids', '=', [])]}">
-                        <separator string="Seleccionar Líneas para Mover"/>
-                        <field name="available_line_ids" widget="many2many_tags" readonly="1"/>
-                        <field name="selected_line_ids" widget="many2many_checkboxes" 
-                               options="{'no_create': True, 'no_open': True}"
-                               domain="[('id', 'in', available_line_ids)]"/>
-                        <field name="total_selected_qty" readonly="1"/>
-                    </group>
+                    <!-- Show lines for selection -->
+                    <field name="available_line_ids" invisible="1" attrs="{'invisible': [('available_line_ids', '=', [])]}"/>
+                    <field name="line_selection_ids" 
+                           options="{'no_create': True, 'no_open': True}"
+                           nolabel="1"
+                           attrs="{'invisible': [('available_line_ids', '=', [])]}"/>
                 </sheet>
                 <footer>
                     <button name="action_execute" string="Ejecutar" type="object" class="btn-primary"/>
                     <button string="Cancelar" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
+        </field>
+    </record>
+    
+    <!-- Custom tree view for line selection -->
+    <record id="view_purchase_line_selection_tree" model="ir.ui.view">
+        <field name="name">purchase.split.wizard.line.tree</field>
+        <field name="model">purchase.split.wizard.line</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="true" delete="false" decoration-success="True">
+                <field name="selected" widget="boolean_toggle"/>
+                <field name="product_id" readonly="1"/>
+                <field name="name" readonly="1"/>
+                <field name="product_qty" readonly="1"/>
+            </tree>
         </field>
     </record>
 </odoo> 

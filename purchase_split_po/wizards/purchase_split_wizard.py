@@ -4,6 +4,17 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+class PurchaseSplitWizardLine(models.TransientModel):
+    _name = 'purchase.split.wizard.line'
+    _description = 'Purchase Split Wizard Line'
+    
+    wizard_id = fields.Many2one('purchase.order.split.wizard', required=True)
+    purchase_line_id = fields.Many2one('purchase.order.line', required=True)
+    product_id = fields.Many2one('product.product', related='purchase_line_id.product_id', readonly=True)
+    name = fields.Text(related='purchase_line_id.name', readonly=True)
+    product_qty = fields.Float(related='purchase_line_id.product_qty', readonly=True)
+    selected = fields.Boolean(string='Seleccionar', default=False)
+
 class PurchaseOrderSplitWizard(models.TransientModel):
     _name = 'purchase.order.split.wizard'
     _description = 'Asistente para Dividir Línea de Orden de Compra'
@@ -33,14 +44,11 @@ class PurchaseOrderSplitWizard(models.TransientModel):
         string='Líneas Disponibles',
         readonly=True
     )
-    # Field for user to select lines
-    selected_line_ids = fields.Many2many(
-        'purchase.order.line',
-        'purchase_split_wizard_selected_line_rel',
+    # Field for user to select lines (One2many approach)
+    line_selection_ids = fields.One2many(
+        'purchase.split.wizard.line',
         'wizard_id',
-        'line_id',
-        string='Líneas Seleccionadas',
-        domain="[('id', 'in', available_line_ids)]"
+        string='Líneas para Seleccionar'
     )
     supplier_id = fields.Many2one(
         'res.partner', 
@@ -149,10 +157,78 @@ class PurchaseOrderSplitWizard(models.TransientModel):
         for wizard in self:
             wizard.remaining_qty = wizard.purchase_line_id.product_qty - wizard.order_qty
     
-    @api.depends('selected_line_ids')
+    @api.depends('line_selection_ids.selected')
     def _compute_total_selected_qty(self):
         for wizard in self:
-            wizard.total_selected_qty = sum(line.product_qty for line in wizard.selected_line_ids)
+            selected_lines = wizard.line_selection_ids.filtered('selected')
+            wizard.total_selected_qty = sum(line.product_qty for line in selected_lines)
+    
+    @api.model
+    def create(self, vals):
+        """Override create to populate wizard lines after wizard creation"""
+        wizard = super(PurchaseOrderSplitWizard, self).create(vals)
+        
+        # Debug logging
+        _logger.info(f"Creating wizard with vals: {vals}")
+        _logger.info(f"Wizard purchase_order_id: {wizard.purchase_order_id}")
+        
+        # Get available lines from the purchase order
+        if wizard.purchase_order_id:
+            available_lines = wizard.purchase_order_id.order_line.filtered(lambda l: l.state in ['draft', 'sent'])
+            _logger.info(f"Found {len(available_lines)} available lines")
+            
+            if available_lines:
+                # Create wizard lines for selection
+                wizard_lines = []
+                for line in available_lines:
+                    wizard_lines.append((0, 0, {
+                        'purchase_line_id': line.id,
+                        'selected': False,
+                    }))
+                wizard.line_selection_ids = wizard_lines
+                _logger.info(f"Created {len(wizard_lines)} wizard lines")
+        return wizard
+    
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Override create_multi to populate wizard lines after wizard creation"""
+        wizards = super(PurchaseOrderSplitWizard, self).create(vals_list)
+        
+        for wizard in wizards:
+            # Get available lines from the purchase order
+            if wizard.purchase_order_id:
+                available_lines = wizard.purchase_order_id.order_line.filtered(lambda l: l.state in ['draft', 'sent'])
+                _logger.info(f"Found {len(available_lines)} available lines for wizard {wizard.id}")
+                
+                if available_lines:
+                    # Create wizard lines for selection
+                    wizard_lines = []
+                    for line in available_lines:
+                        wizard_lines.append((0, 0, {
+                            'purchase_line_id': line.id,
+                            'selected': False,
+                        }))
+                    wizard.line_selection_ids = wizard_lines
+                    _logger.info(f"Created {len(wizard_lines)} wizard lines for wizard {wizard.id}")
+        return wizards
+    
+    @api.onchange('purchase_order_id')
+    def _onchange_purchase_order_id(self):
+        """Populate wizard lines when purchase order is set"""
+        if self.purchase_order_id and not self.line_selection_ids:
+            available_lines = self.purchase_order_id.order_line.filtered(lambda l: l.state in ['draft', 'sent'])
+            _logger.info(f"Onchange: Found {len(available_lines)} available lines")
+            
+            if available_lines:
+                # Create wizard lines for selection
+                wizard_lines = []
+                for line in available_lines:
+                    wizard_lines.append((0, 0, {
+                        'purchase_line_id': line.id,
+                        'selected': False,
+                    }))
+                self.line_selection_ids = wizard_lines
+                _logger.info(f"Onchange: Created {len(wizard_lines)} wizard lines")
     
     @api.onchange('purchase_line_id')
     def _onchange_purchase_line_id(self):
@@ -304,9 +380,15 @@ class PurchaseOrderSplitWizard(models.TransientModel):
         """
         self.ensure_one()
         
+        # Get selected lines from the wizard lines
+        selected_lines = self.line_selection_ids.filtered('selected')
+        
         # Validate that at least one line is selected
-        if not self.selected_line_ids and not self.purchase_line_id:
+        if not selected_lines:
             raise UserError(_('Debe seleccionar al menos una línea para procesar.'))
+        
+        # Update selected_line_ids for compatibility with existing methods
+        self.selected_line_ids = [(6, 0, selected_lines.mapped('purchase_line_id').ids)]
         
         if self.action_type == 'new':
             return self.action_create_new_po()

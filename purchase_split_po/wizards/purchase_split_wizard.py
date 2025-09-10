@@ -21,7 +21,7 @@ class PurchaseOrderSplitWizard(models.TransientModel):
 
     purchase_order_id = fields.Many2one(
         'purchase.order', 
-        string='Orden de Compra Original',
+        string='OC Original',
         required=True,
     )
     purchase_line_id = fields.Many2one(

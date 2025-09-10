@@ -212,15 +212,38 @@ class PurchaseOrderSplitWizard(models.TransientModel):
                     _logger.info(f"Created {len(wizard_lines)} wizard lines for wizard {wizard.id}")
         return wizards
     
+    def write(self, vals):
+        """Override write to ensure wizard lines are created after wizard is saved"""
+        result = super(PurchaseOrderSplitWizard, self).write(vals)
+        
+        for wizard in self:
+            # If wizard lines don't exist but purchase order is set, create them
+            if wizard.purchase_order_id and not wizard.line_selection_ids:
+                available_lines = wizard.purchase_order_id.order_line.filtered(lambda l: l.state in ['draft', 'sent'])
+                _logger.info(f"Write: Found {len(available_lines)} available lines for wizard {wizard.id}")
+                
+                if available_lines:
+                    # Create wizard lines for selection
+                    wizard_lines = []
+                    for line in available_lines:
+                        wizard_lines.append((0, 0, {
+                            'purchase_line_id': line.id,
+                            'selected': False,
+                        }))
+                    wizard.line_selection_ids = wizard_lines
+                    _logger.info(f"Write: Created {len(wizard_lines)} wizard lines for wizard {wizard.id}")
+        
+        return result
+    
     @api.onchange('purchase_order_id')
     def _onchange_purchase_order_id(self):
-        """Populate wizard lines when purchase order is set"""
+        """Prepare wizard lines data when purchase order is set"""
         if self.purchase_order_id and not self.line_selection_ids:
             available_lines = self.purchase_order_id.order_line.filtered(lambda l: l.state in ['draft', 'sent'])
             _logger.info(f"Onchange: Found {len(available_lines)} available lines")
             
             if available_lines:
-                # Create wizard lines for selection
+                # Prepare wizard lines data (will be created after wizard is saved)
                 wizard_lines = []
                 for line in available_lines:
                     wizard_lines.append((0, 0, {
@@ -228,7 +251,7 @@ class PurchaseOrderSplitWizard(models.TransientModel):
                         'selected': False,
                     }))
                 self.line_selection_ids = wizard_lines
-                _logger.info(f"Onchange: Created {len(wizard_lines)} wizard lines")
+                _logger.info(f"Onchange: Prepared {len(wizard_lines)} wizard lines")
     
     @api.onchange('purchase_line_id')
     def _onchange_purchase_line_id(self):
